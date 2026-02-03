@@ -1,0 +1,48 @@
+// Custom styles for sneeze-tracker
+// This file is imported after Bootstrap, so you can override any Bootstrap styles here
+// The primary color (#1d4638) is set in app.scss and applies to all Bootstrap components
+
+// Compact statistics table
+.compact-stats-table {
+    td {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #e9ecef;
+        
+        &:first-child {
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        &:last-child {
+            text-align: right;
+            font-weight: 600;
+            color: #1d4638;
+            font-size: 1.1rem;
+        }
+    }
+    
+    tr:last-child td {
+        border-bottom: none;
+    }
+}
+
+// Chart card styling  
+.chart-card {
+    .card-title {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+        
+        i {
+            color: #1d4638;
+        }
+    }
+}
+
+// Fix pagination icon sizes
+.pagination {
+    svg {
+        width: 1rem;
+        height: 1rem;
+        vertical-align: middle;
+    }
+}

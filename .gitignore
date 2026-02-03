@@ -1,0 +1,46 @@
+*.log
+.DS_Store
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
+
+# Test scripts in root
+/add_random_locations.php
+/check_encryption.php
+/check_users.php
+/create_more_test_users.php
+/create_test_users.php
+/encrypt_locations.php
+/fix_encryption.php
+/import_csv.php
+/import_sneeze_data.php
+/recreate_user.php
+/reencrypt.php
+/test_encryption.php
+/verify_decryption.php
+
+# Build artifacts
+vendor.zip
+
+# Database files
+database/*.sqlite
+database/*.csv

@@ -1,0 +1,9 @@
+// Override Bootstrap variables BEFORE importing Bootstrap
+$primary: #1d4638;
+$font-family-sans-serif: 'Figtree', system-ui, -apple-system, sans-serif;
+
+@import 'bootstrap/scss/bootstrap';
+@import 'flag-icons/css/flag-icons.min.css';
+
+// Custom styles - add your overrides here
+@import 'custom';
