@@ -294,29 +294,6 @@
         </div>
         @endif
 
-        <!-- Call to Action -->
-        <div class="card shadow bg-light">
-            <div class="card-body text-center py-5">
-                @guest
-                    <h3 class="mb-3">{{ __('messages.home.cta_guest_title') }}</h3>
-                    <p class="text-muted mb-4">{{ __('messages.home.cta_guest_subtitle') }}</p>
-                    <div class="d-flex gap-3 justify-content-center">
-                        <a href="{{ route('register') }}" class="btn btn-primary btn-lg">
-                            <i class="bi bi-person-plus"></i> {{ __('messages.home.sign_up') }}
-                        </a>
-                        <a href="{{ route('login') }}" class="btn btn-outline-primary btn-lg">
-                            <i class="bi bi-box-arrow-in-right"></i> {{ __('messages.nav.login') }}
-                        </a>
-                    </div>
-                @else
-                    <h3 class="mb-3">{{ __('messages.home.cta_user_title') }}</h3>
-                    <p class="text-muted mb-4">{{ __('messages.home.cta_user_subtitle') }}</p>
-                    <a href="{{ route('dashboard') }}" class="btn btn-primary btn-lg">
-                        <i class="bi bi-speedometer2"></i> {{ __('messages.home.go_to_dashboard') }}
-                    </a>
-                @endguest
-            </div>
-        </div>
     </div>
 
     @push('scripts')
