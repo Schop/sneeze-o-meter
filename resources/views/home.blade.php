@@ -183,68 +183,11 @@
             </div>
         </div>
 
-        <!-- Second Row: Top Days/Months & General Stats -->
-        <div class="row g-4 mb-4">
-            <div class="col-12 col-lg-4">
-                <div class="card shadow h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-graph-up text-primary" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-3 mb-2">{{ __('messages.home.top_day') }}</h5>
-                        @if($topDay)
-                            <h4 class="text-primary mb-0">{{ number_format($topDay->total) }} {{ __('messages.home.sneezes') }}</h4>
-                            <p class="text-muted">{{ \Carbon\Carbon::parse($topDay->sneeze_date)->format('l, F j, Y') }}</p>
-                        @else
-                            <p class="text-muted">{{ __('messages.home.no_data') }}</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-12 col-lg-4">
-                <div class="card shadow h-100">
-                    <div class="card-body text-center">
-                        <i class="bi bi-bar-chart text-primary" style="font-size: 2.5rem;"></i>
-                        <h5 class="mt-3 mb-2">{{ __('messages.home.top_month') }}</h5>
-                        @if($topMonth)
-                            <h4 class="text-primary mb-0">{{ number_format($topMonth->total) }} {{ __('messages.home.sneezes') }}</h4>
-                            <p class="text-muted">{{ \Carbon\Carbon::parse($topMonth->month . '-01')->format('F Y') }}</p>
-                        @else
-                            <p class="text-muted">{{ __('messages.home.no_data') }}</p>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-12 col-lg-4">
-                <div class="card shadow h-100">
-                    <div class="card-body">
-                        <h5 class="text-muted mb-3"><i class="bi bi-clipboard-data"></i> {{ __('messages.home.general_stats') }}</h5>
-                        <table class="compact-stats-table w-100">
-                            <tbody>
-                                <tr>
-                                    <td>{{ __('messages.home.active_users') }}</td>
-                                    <td>{{ number_format($totalUsers) }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ __('messages.home.total_sneezes') }}</td>
-                                    <td>{{ number_format($totalSneezes) }}</td>
-                                </tr>
-                                <tr>
-                                    <td>{{ __('messages.home.total_events') }}</td>
-                                    <td>{{ number_format($totalEvents) }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Daily and Monthly Trend Charts -->
         <div class="row g-4 mb-4">
             <div class="col-12 col-lg-6">
                 <div class="card shadow h-100">
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column">
                         <h5 class="card-title fw-bold mb-3">
                             <i class="bi bi-graph-up-arrow"></i> {{ __('messages.home.daily_trend') }}
                         </h5>
@@ -255,23 +198,29 @@
                                 <button type="button" class="btn btn-outline-primary" onclick="switchDailyTrend(90, this)">{{ __('messages.dashboard.last_90_days') }}</button>
                             </div>
                         </div>
-                        <div style="height: 300px;">
+                        <div class="flex-grow-1" style="min-height: 300px;">
                             <canvas id="dailyTrendChart"></canvas>
                         </div>
+                        <p class="text-muted small text-center mt-2 mb-0">
+                            <i class="bi bi-cursor"></i> {{ __('messages.home.click_day_for_details') }}
+                        </p>
                     </div>
                 </div>
             </div>
             
             <div class="col-12 col-lg-6">
                 <div class="card shadow h-100">
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column">
                         <h5 class="card-title fw-bold mb-3">
                             <i class="bi bi-calendar3"></i> {{ __('messages.home.monthly_trend') }}
                         </h5>
                         @if(isset($monthlyData) && $monthlyData->count() > 0)
-                        <div style="height: 300px;">
+                        <div class="flex-grow-1" style="min-height: 300px;">
                             <canvas id="monthlyTrendChart"></canvas>
                         </div>
+                        <p class="text-muted small text-center mt-2 mb-0">
+                            <i class="bi bi-cursor"></i> {{ __('messages.home.click_month_for_details') }}
+                        </p>
                         @else
                         <div class="text-center text-muted py-5">
                             <p>{{ __('messages.home.no_data') }}</p>
@@ -285,8 +234,8 @@
         <!-- Sneeze Heatmap -->
         @if(isset($sneezeLocations) && $sneezeLocations->count() > 0)
         <div class="row g-4 mb-4">
-            <div class="col-12">
-                <div class="card shadow">
+            <div class="col-12 col-lg-8">
+                <div class="card shadow h-100">
                     <div class="card-body">
                         <h5 class="card-title fw-bold mb-3">
                             <i class="bi bi-geo-alt-fill"></i> {{ __('messages.home.sneeze_heatmap') }}
@@ -294,6 +243,51 @@
                         </h5>
                         <p class="text-muted small mb-3">{{ __('messages.home.heatmap_privacy_note') }}</p>
                         <div id="sneezeMap" style="height: 400px; border-radius: 8px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="card shadow h-100">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold mb-3"><i class="bi bi-clipboard-data"></i> {{ __('messages.home.general_stats') }}</h5>
+                        <table class="compact-stats-table w-100 mb-4">
+                            <tbody>
+                                <tr>
+                                    <td><i class="bi bi-people-fill text-primary me-2"></i>{{ __('messages.home.active_users') }}</td>
+                                    <td class="fw-bold text-primary">{{ number_format($totalUsers) }}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-droplet-fill text-primary me-2"></i>{{ __('messages.home.total_sneezes') }}</td>
+                                    <td class="fw-bold text-primary">{{ number_format($totalSneezes) }}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-list-ol text-primary me-2"></i>{{ __('messages.home.total_events') }}</td>
+                                    <td class="fw-bold text-primary">{{ number_format($totalEvents) }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <hr>
+                        <div class="text-center mb-3">
+                            <i class="bi bi-graph-up text-primary" style="font-size: 2rem;"></i>
+                            <h6 class="mt-2 mb-1">{{ __('messages.home.top_day') }}</h6>
+                            @if($topDay)
+                                <p class="fw-bold text-primary mb-0">{{ number_format($topDay->total) }} {{ __('messages.home.sneezes') }}</p>
+                                <p class="text-muted small">{{ \App\Helpers\DateHelper::formatLocalized(\Carbon\Carbon::parse($topDay->sneeze_date)) }}</p>
+                            @else
+                                <p class="text-muted small">{{ __('messages.home.no_data') }}</p>
+                            @endif
+                        </div>
+                        <hr>
+                        <div class="text-center">
+                            <i class="bi bi-bar-chart text-primary" style="font-size: 2rem;"></i>
+                            <h6 class="mt-2 mb-1">{{ __('messages.home.top_month') }}</h6>
+                            @if($topMonth)
+                                <p class="fw-bold text-primary mb-0">{{ number_format($topMonth->total) }} {{ __('messages.home.sneezes') }}</p>
+                                <p class="text-muted small">{{ \Carbon\Carbon::parse($topMonth->month . '-01')->translatedFormat('F Y') }}</p>
+                            @else
+                                <p class="text-muted small">{{ __('messages.home.no_data') }}</p>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -449,6 +443,16 @@
                                 precision: 0
                             }
                         }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const monthStr = monthlyData[index].month;
+                            window.location.href = `/monthly-details/${monthStr}`;
+                        }
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
                     }
                 }
             });

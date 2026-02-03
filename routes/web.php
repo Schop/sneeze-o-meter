@@ -24,6 +24,9 @@ Route::get('/leaderboard', [SneezeController::class, 'leaderboard'])->name('lead
 // Daily details page (available to both guests and authenticated users)
 Route::get('/daily-details/{date}', [SneezeController::class, 'dailyDetails'])->name('daily.details');
 
+// Monthly details page (available to both guests and authenticated users)
+Route::get('/monthly-details/{month}', [SneezeController::class, 'monthlyDetails'])->name('monthly.details');
+
 // Terms and conditions page
 Route::get('/terms', function () {
     return view('terms');

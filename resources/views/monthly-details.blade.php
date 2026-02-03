@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-slot name="title">{{ __('messages.daily.title') }} - {{ $date->format('F j, Y') }}</x-slot>
+    <x-slot name="title">{{ __('messages.monthly.title') }} - {{ $date->translatedFormat('F Y') }}</x-slot>
     
     <div class="py-4">
         <!-- Header -->
@@ -8,18 +8,18 @@
                 <div class="card shadow">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
-                            <a href="{{ route('daily.details', ['date' => $date->copy()->subDay()->format('Y-m-d')]) }}" class="btn btn-outline-secondary">
-                                <i class="bi bi-chevron-left"></i> {{ __('messages.daily.previous_day') }}
+                            <a href="{{ route('monthly.details', ['month' => $date->copy()->subMonth()->format('Y-m')]) }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-chevron-left"></i> {{ __('messages.monthly.previous_month') }}
                             </a>
                             <div class="text-center flex-grow-1">
                                 <h2 class="mb-1">
-                                    {{ \App\Helpers\DateHelper::formatLocalized($date) }}
+                                    {{ $date->translatedFormat('F Y') }}
                                 </h2>
                             </div>
                             <div class="d-flex gap-2">
-                                @if(!$date->isToday())
-                                <a href="{{ route('daily.details', ['date' => $date->copy()->addDay()->format('Y-m-d')]) }}" class="btn btn-outline-secondary">
-                                    {{ __('messages.daily.next_day') }} <i class="bi bi-chevron-right"></i>
+                                @if(!$date->isCurrentMonth())
+                                <a href="{{ route('monthly.details', ['month' => $date->copy()->addMonth()->format('Y-m')]) }}" class="btn btn-outline-secondary">
+                                    {{ __('messages.monthly.next_month') }} <i class="bi bi-chevron-right"></i>
                                 </a>
                                 @endif
                             </div>
@@ -29,41 +29,35 @@
             </div>
         </div>
 
-
-
         <!-- User & General Stats Table Cards Row + Top Sneezers Leaderboard -->
         <div class="row mb-4 justify-content-center">
             <div class="col-12 col-lg-4">
                 <div class="card shadow h-100">
                     <div class="card-body">
-                        <h5 class="text-muted mb-3"><i class="bi bi-person-circle"></i> {{ __('messages.daily.your_stats') }}</h5>
+                        <h5 class="text-muted mb-3"><i class="bi bi-person-circle"></i> {{ __('messages.monthly.your_stats') }}</h5>
                         @auth
                         @if($userStats && $userStats['total_count'] > 0)
                         <table class="compact-stats-table w-100">
                             <tbody>
                                 <tr>
-                                    <td><i class="bi bi-droplet-fill text-primary me-1"></i> {{ __('messages.daily.your_sneezes') }}</td>
+                                    <td><i class="bi bi-droplet-fill text-primary me-1"></i> {{ __('messages.monthly.your_sneezes') }}</td>
                                     <td class="fw-bold text-primary">{{ number_format($userStats['total_count']) }}</td>
                                 </tr>
                                 <tr>
-                                    <td><i class="bi bi-list-ol text-primary me-1"></i> {{ __('messages.daily.your_events') }}</td>
+                                    <td><i class="bi bi-list-ol text-primary me-1"></i> {{ __('messages.monthly.your_events') }}</td>
                                     <td class="fw-bold text-primary">{{ number_format($userStats['total_events']) }}</td>
                                 </tr>
                                 <tr>
-                                    <td><i class="bi bi-sunrise text-primary me-1"></i> {{ __('messages.daily.first_sneeze') }}</td>
-                                    <td class="fw-bold text-primary">{{ substr($userStats['first_sneeze'], 0, 5) }}</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="bi bi-sunset text-primary me-1"></i> {{ __('messages.daily.last_sneeze') }}</td>
-                                    <td class="fw-bold text-primary">{{ substr($userStats['last_sneeze'], 0, 5) }}</td>
+                                    <td><i class="bi bi-calendar2-day text-primary me-1"></i> {{ __('messages.monthly.avg_per_day') }}</td>
+                                    <td class="fw-bold text-primary">{{ number_format($userStats['total_count'] / $date->daysInMonth, 1) }}</td>
                                 </tr>
                             </tbody>
                         </table>
                         @else
-                        <p class="text-muted">{{ __('messages.daily.no_data') }}</p>
+                        <p class="text-muted">{{ __('messages.monthly.no_data') }}</p>
                         @endif
                         @else
-                        <p class="text-muted mb-3">{{ __('messages.daily.login_to_view_personal') }}</p>
+                        <p class="text-muted mb-3">{{ __('messages.monthly.login_to_view_personal') }}</p>
                         <div class="d-grid gap-2">
                             <a href="{{ route('login') }}" class="btn btn-primary btn-sm">
                                 <i class="bi bi-box-arrow-in-right"></i> {{ __('messages.nav.login') }}
@@ -79,20 +73,24 @@
             <div class="col-12 col-lg-4">
                 <div class="card shadow h-100">
                     <div class="card-body">
-                        <h5 class="text-muted mb-3"><i class="bi bi-clipboard-data"></i> {{ __('messages.daily.general_stats') }}</h5>
+                        <h5 class="text-muted mb-3"><i class="bi bi-clipboard-data"></i> {{ __('messages.monthly.general_stats') }}</h5>
                         <table class="compact-stats-table w-100">
                             <tbody>
                                 <tr>
-                                    <td><i class="bi bi-people-fill text-primary me-1"></i> {{ __('messages.daily.active_users') }}</td>
+                                    <td><i class="bi bi-people-fill text-primary me-1"></i> {{ __('messages.monthly.active_users') }}</td>
                                     <td class="fw-bold text-primary">{{ number_format($generalStats['active_users']) }}</td>
                                 </tr>
                                 <tr>
-                                    <td><i class="bi bi-droplet-fill text-primary me-1"></i> {{ __('messages.daily.total_sneezes') }}</td>
+                                    <td><i class="bi bi-droplet-fill text-primary me-1"></i> {{ __('messages.monthly.total_sneezes') }}</td>
                                     <td class="fw-bold text-primary">{{ number_format($generalStats['total_sneezes']) }}</td>
                                 </tr>
                                 <tr>
-                                    <td><i class="bi bi-list-ol text-primary me-1"></i> {{ __('messages.daily.total_events') }}</td>
+                                    <td><i class="bi bi-list-ol text-primary me-1"></i> {{ __('messages.monthly.total_events') }}</td>
                                     <td class="fw-bold text-primary">{{ number_format($generalStats['total_events']) }}</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="bi bi-calendar2-day text-primary me-1"></i> {{ __('messages.monthly.avg_per_day') }}</td>
+                                    <td class="fw-bold text-primary">{{ number_format($generalStats['total_sneezes'] / $date->daysInMonth, 1) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -102,7 +100,7 @@
             <div class="col-12 col-lg-4">
                 <div class="card shadow h-100">
                     <div class="card-body">
-                        <h5 class="text-muted mb-3"><i class="bi bi-trophy"></i> {{ __('messages.daily.top_sneezers') }}</h5>
+                        <h5 class="text-muted mb-3"><i class="bi bi-trophy"></i> {{ __('messages.monthly.top_sneezers') }}</h5>
                         @php
                             $top5 = $topSneezers->take(5);
                             $userInTop5 = $top5->pluck('id')->contains(auth()->id());
@@ -133,12 +131,12 @@
                                 @endif
                             </div>
                             <div class="mt-3 text-center">
-                                <a href="{{ route('leaderboard') }}?type=daily&date={{ $date->format('Y-m-d') }}" class="btn btn-sm btn-outline-primary">
+                                <a href="{{ route('leaderboard') }}?type=monthly&month={{ $date->format('Y-m') }}" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-trophy"></i> {{ __('messages.home.view_full_leaderboard') }}
                                 </a>
                             </div>
                         @else
-                            <p class="text-muted">{{ __('messages.daily.no_data') }}</p>
+                            <p class="text-muted">{{ __('messages.monthly.no_data') }}</p>
                         @endif
                     </div>
                 </div>
@@ -154,10 +152,10 @@
                     <div class="card-body">
                         <h4 class="card-title mb-1">
                             <i class="bi bi-geo-alt"></i>
-                            {{ __('messages.daily.your_heatmap') }}
+                            {{ __('messages.monthly.your_heatmap') }}
                         </h4>
                         <p class="text-muted small mb-3">
-                            <i class="bi bi-lock-fill"></i> {{ __('messages.daily.your_heatmap_privacy') }}
+                            <i class="bi bi-lock-fill"></i> {{ __('messages.monthly.your_heatmap_privacy') }}
                         </p>
                         <div id="userHeatmap" style="height: 400px; border-radius: 8px;"></div>
                     </div>
@@ -171,10 +169,10 @@
                     <div class="card-body">
                         <h4 class="card-title mb-1">
                             <i class="bi bi-geo-alt"></i>
-                            {{ __('messages.daily.all_users_heatmap') }}
+                            {{ __('messages.monthly.all_users_heatmap') }}
                         </h4>
                         <p class="text-muted small mb-3">
-                            <i class="bi bi-shield-check"></i> {{ __('messages.daily.all_users_heatmap_privacy') }}
+                            <i class="bi bi-shield-check"></i> {{ __('messages.monthly.all_users_heatmap_privacy') }}
                         </p>
                         <div id="allHeatmap" style="height: 400px; border-radius: 8px;"></div>
                     </div>
@@ -183,7 +181,7 @@
             @endif
         </div>
 
-        <!-- Hourly Distribution Charts -->
+        <!-- Daily Distribution Charts -->
         <div class="row g-4 mb-4">
             @auth
             @if($userStats && $userStats['total_count'] > 0)
@@ -192,10 +190,10 @@
                     <div class="card-body">
                         <h4 class="card-title mb-3">
                             <i class="bi bi-graph-up"></i>
-                            {{ __('messages.daily.your_hourly_distribution') }}
+                            {{ __('messages.monthly.your_daily_distribution') }}
                         </h4>
                         <div style="height: 350px;">
-                            <canvas id="userHourlyChart"></canvas>
+                            <canvas id="userDailyChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -206,11 +204,11 @@
                     <div class="card-body">
                         <h4 class="card-title mb-3">
                             <i class="bi bi-graph-up"></i>
-                            {{ __('messages.daily.your_hourly_distribution') }}
+                            {{ __('messages.monthly.your_daily_distribution') }}
                         </h4>
                         <div class="d-flex align-items-center justify-content-center" style="height: 350px;">
                             <div class="text-center">
-                                <p class="text-muted mb-3">{{ __('messages.daily.login_to_view_personal') }}</p>
+                                <p class="text-muted mb-3">{{ __('messages.monthly.login_to_view_personal') }}</p>
                                 <a href="{{ route('login') }}" class="btn btn-primary btn-sm me-2">
                                     {{ __('messages.nav.login') }}
                                 </a>
@@ -229,11 +227,11 @@
                     <div class="card-body">
                         <h4 class="card-title mb-3">
                             <i class="bi bi-graph-up"></i>
-                            {{ __('messages.daily.your_hourly_distribution') }}
+                            {{ __('messages.monthly.your_daily_distribution') }}
                         </h4>
                         <div class="d-flex align-items-center justify-content-center" style="height: 350px;">
                             <div class="text-center">
-                                <p class="text-muted mb-3">{{ __('messages.daily.login_to_view_personal') }}</p>
+                                <p class="text-muted mb-3">{{ __('messages.monthly.login_to_view_personal') }}</p>
                                 <a href="{{ route('login') }}" class="btn btn-primary btn-sm me-2">
                                     {{ __('messages.nav.login') }}
                                 </a>
@@ -251,10 +249,10 @@
                     <div class="card-body">
                         <h4 class="card-title mb-3">
                             <i class="bi bi-graph-up"></i>
-                            {{ __('messages.daily.all_users_hourly_distribution') }}
+                            {{ __('messages.monthly.all_users_daily_distribution') }}
                         </h4>
                         <div style="height: 350px;">
-                            <canvas id="hourlyChart"></canvas>
+                            <canvas id="dailyChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -270,12 +268,13 @@
                     <div class="card-body">
                         <h4 class="card-title mb-3">
                             <i class="bi bi-list-ul"></i>
-                            {{ __('messages.daily.your_sneezes_today') }}
+                            {{ __('messages.monthly.your_sneezes_this_month') }}
                         </h4>
                         <div class="table-responsive">
                             <table id="userSneezesTable" class="table table-striped table-hover">
                                 <thead>
                                     <tr>
+                                        <th>{{ __('messages.dashboard.date') }}</th>
                                         <th>{{ __('messages.dashboard.time') }}</th>
                                         <th>{{ __('messages.dashboard.count') }}</th>
                                         <th>{{ __('messages.dashboard.location') }}</th>
@@ -286,6 +285,7 @@
                                 <tbody>
                                     @foreach($userSneezes as $sneeze)
                                         <tr>
+                                            <td>{{ \App\Helpers\DateHelper::formatLocalized(\Carbon\Carbon::parse($sneeze->sneeze_date)) }}</td>
                                             <td>{{ substr($sneeze->sneeze_time, 0, 5) }}</td>
                                             <td>{{ $sneeze->count }}</td>
                                             <td>{{ $sneeze->location ?: '-' }}</td>
@@ -326,18 +326,13 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script>
         const primaryColor = '#1d4638';
-        const hourlyData = @json($hourlyDataComplete);
-        const userHourlyData = @json($userHourlyDataComplete);
+        const dailyData = @json($dailyDataComplete);
+        const userDailyData = @json($userDailyDataComplete);
         const userHeatmapData = @json($userHeatmapData ?? []);
         const allHeatmapData = @json($allHeatmapData ?? []);
 
-        // Debug: Log heatmap data
-        console.log('User heatmap data:', userHeatmapData);
-        console.log('All heatmap data:', allHeatmapData);
-
         // Initialize heatmaps
         function initHeatmap(elementId, data) {
-            console.log('Initializing heatmap for', elementId, 'with', data.length, 'points');
             if (data.length === 0) return;
 
             // Calculate center based on data points
@@ -381,7 +376,7 @@
             const heatData = data.map(point => [
                 parseFloat(point.lat),
                 parseFloat(point.lng),
-                parseFloat(point.count) * 0.5  // Adjust intensity
+                parseFloat(point.count) * 0.5
             ]);
 
             // Add heatmap layer
@@ -409,16 +404,17 @@
             initHeatmap('allHeatmap', allHeatmapData);
         }
         
-        // Create hourly chart
-        const hours = Array.from({length: 24}, (_, i) => i.toString().padStart(2, '0') + ':00');
-        const values = Object.values(hourlyData);
+        // Create daily chart
+        const days = Object.keys(dailyData);
+        const values = Object.values(dailyData);
+        const dayLabels = days.map(d => new Date(d).getDate());
         
-        new Chart(document.getElementById('hourlyChart'), {
+        new Chart(document.getElementById('dailyChart'), {
             type: 'bar',
             data: {
-                labels: hours,
+                labels: dayLabels,
                 datasets: [{
-                    label: '{{ __('messages.daily.sneezes') }}',
+                    label: '{{ __('messages.monthly.sneezes') }}',
                     data: values,
                     backgroundColor: 'rgba(29, 70, 56, 0.7)',
                     borderColor: primaryColor,
@@ -436,21 +432,27 @@
                     y: {
                         beginAtZero: true,
                         ticks: { stepSize: 1 }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: '{{ __('messages.monthly.day_of_month') }}'
+                        }
                     }
                 }
             }
         });
         
-        // Create user hourly chart if element exists
-        const userHourlyChartElement = document.getElementById('userHourlyChart');
-        if (userHourlyChartElement) {
-            const userValues = Object.values(userHourlyData);
-            new Chart(userHourlyChartElement, {
+        // Create user daily chart if element exists
+        const userDailyChartElement = document.getElementById('userDailyChart');
+        if (userDailyChartElement) {
+            const userValues = Object.values(userDailyData);
+            new Chart(userDailyChartElement, {
                 type: 'bar',
                 data: {
-                    labels: hours,
+                    labels: dayLabels,
                     datasets: [{
-                        label: '{{ __('messages.daily.sneezes') }}',
+                        label: '{{ __('messages.monthly.sneezes') }}',
                         data: userValues,
                         backgroundColor: 'rgba(29, 70, 56, 0.7)',
                         borderColor: primaryColor,
@@ -468,6 +470,12 @@
                         y: {
                             beginAtZero: true,
                             ticks: { stepSize: 1 }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: '{{ __('messages.monthly.day_of_month') }}'
+                            }
                         }
                     }
                 }
@@ -478,6 +486,7 @@
         $(document).ready(function() {
             $('#userSneezesTable').DataTable({
                 pageLength: 20,
+                order: [[0, 'desc'], [1, 'desc']],
                 language: {
                     search: "{{ __('messages.datatables.search_sneezes') }}:",
                     lengthMenu: "{{ __('messages.datatables.show_sneezes') }}",

@@ -591,18 +591,30 @@ class SneezeController extends Controller
                 ->toArray();
         }
 
-        // Get all users' location data for heatmap
+        // Get all users' location data for heatmap (rounded for privacy)
         $allHeatmapData = Sneeze::whereDate('sneeze_date', $date)
             ->whereNotNull('latitude')
             ->whereNotNull('longitude')
             ->get()
             ->map(function ($sneeze) {
                 return [
-                    'lat' => $sneeze->latitude,
-                    'lng' => $sneeze->longitude,
+                    'lat' => round($sneeze->latitude, 2),  // Round to ~1km precision
+                    'lng' => round($sneeze->longitude, 2),
                     'count' => $sneeze->count
                 ];
             })
+            // Group by rounded coordinates and sum counts
+            ->groupBy(function ($item) {
+                return $item['lat'] . ',' . $item['lng'];
+            })
+            ->map(function ($group) {
+                return [
+                    'lat' => $group->first()['lat'],
+                    'lng' => $group->first()['lng'],
+                    'count' => $group->sum('count')
+                ];
+            })
+            ->values()
             ->toArray();
 
         return view('daily-details', compact(
@@ -612,6 +624,152 @@ class SneezeController extends Controller
             'totalEvents',
             'hourlyDataComplete',
             'userHourlyDataComplete',
+            'topSneezers',
+            'userStats',
+            'userSneezes',
+            'generalStats',
+            'userHeatmapData',
+            'allHeatmapData'
+        ));
+    }
+
+    public function monthlyDetails($month)
+    {
+        try {
+            $date = \Carbon\Carbon::parse($month . '-01');
+        } catch (\Exception $e) {
+            abort(404);
+        }
+
+        $startOfMonth = $date->copy()->startOfMonth();
+        $endOfMonth = $date->copy()->endOfMonth();
+
+        // General stats for the month
+        $totalSneezes = Sneeze::whereBetween('sneeze_date', [$startOfMonth, $endOfMonth])->sum('count');
+        $totalUsers = Sneeze::whereBetween('sneeze_date', [$startOfMonth, $endOfMonth])->distinct('user_id')->count('user_id');
+        $totalEvents = Sneeze::whereBetween('sneeze_date', [$startOfMonth, $endOfMonth])->count();
+        $generalStats = [
+            'active_users' => $totalUsers,
+            'total_sneezes' => $totalSneezes,
+            'total_events' => $totalEvents,
+        ];
+
+        // Daily distribution for the month
+        $dailyData = Sneeze::whereBetween('sneeze_date', [$startOfMonth, $endOfMonth])
+            ->selectRaw('sneeze_date, SUM(count) as total')
+            ->groupBy('sneeze_date')
+            ->orderBy('sneeze_date')
+            ->pluck('total', 'sneeze_date')
+            ->toArray();
+
+        // Fill in missing days with 0
+        $dailyDataComplete = [];
+        $currentDate = $startOfMonth->copy();
+        while ($currentDate <= $endOfMonth) {
+            $dateKey = $currentDate->format('Y-m-d');
+            $dailyDataComplete[$dateKey] = $dailyData[$dateKey] ?? 0;
+            $currentDate->addDay();
+        }
+
+        // User daily distribution (if authenticated)
+        $userDailyDataComplete = [];
+        if (auth()->check()) {
+            $userDailyData = auth()->user()->sneezes()
+                ->whereBetween('sneeze_date', [$startOfMonth, $endOfMonth])
+                ->selectRaw('sneeze_date, SUM(count) as total')
+                ->groupBy('sneeze_date')
+                ->orderBy('sneeze_date')
+                ->pluck('total', 'sneeze_date')
+                ->toArray();
+
+            // Fill in missing days with 0
+            $currentDate = $startOfMonth->copy();
+            while ($currentDate <= $endOfMonth) {
+                $dateKey = $currentDate->format('Y-m-d');
+                $userDailyDataComplete[$dateKey] = $userDailyData[$dateKey] ?? 0;
+                $currentDate->addDay();
+            }
+        }
+
+        // Top sneezers for the month
+        $topSneezers = User::select('users.id', 'users.name')
+            ->where('users.show_in_leaderboard', true)
+            ->join('sneezes', 'users.id', '=', 'sneezes.user_id')
+            ->whereBetween('sneezes.sneeze_date', [$startOfMonth, $endOfMonth])
+            ->groupBy('users.id', 'users.name')
+            ->selectRaw('SUM(sneezes.count) as sneeze_count')
+            ->orderByDesc('sneeze_count')
+            ->limit(10)
+            ->get();
+
+        // User-specific stats (if authenticated)
+        $userStats = null;
+        $userSneezes = collect();
+        $userHeatmapData = [];
+        if (auth()->check()) {
+            $userSneezes = auth()->user()->sneezes()
+                ->whereBetween('sneeze_date', [$startOfMonth, $endOfMonth])
+                ->orderBy('sneeze_date')
+                ->orderBy('sneeze_time')
+                ->get();
+
+            $userStats = [
+                'total_count' => $userSneezes->sum('count'),
+                'total_events' => $userSneezes->count(),
+                'first_sneeze' => $userSneezes->first()?->sneeze_time,
+                'last_sneeze' => $userSneezes->last()?->sneeze_time,
+            ];
+
+            // Get user's location data for heatmap
+            $userHeatmapData = auth()->user()->sneezes()
+                ->whereBetween('sneeze_date', [$startOfMonth, $endOfMonth])
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->get()
+                ->map(function ($sneeze) {
+                    return [
+                        'lat' => $sneeze->latitude,
+                        'lng' => $sneeze->longitude,
+                        'count' => $sneeze->count
+                    ];
+                })
+                ->toArray();
+        }
+
+        // Get all users' location data for heatmap (rounded for privacy)
+        $allHeatmapData = Sneeze::whereBetween('sneeze_date', [$startOfMonth, $endOfMonth])
+            ->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->get()
+            ->map(function ($sneeze) {
+                return [
+                    'lat' => round($sneeze->latitude, 2),
+                    'lng' => round($sneeze->longitude, 2),
+                    'count' => $sneeze->count
+                ];
+            })
+            ->groupBy(function ($item) {
+                return $item['lat'] . ',' . $item['lng'];
+            })
+            ->map(function ($group) {
+                return [
+                    'lat' => $group->first()['lat'],
+                    'lng' => $group->first()['lng'],
+                    'count' => $group->sum('count')
+                ];
+            })
+            ->values()
+            ->toArray();
+
+        return view('monthly-details', compact(
+            'date',
+            'startOfMonth',
+            'endOfMonth',
+            'totalSneezes',
+            'totalUsers',
+            'totalEvents',
+            'dailyDataComplete',
+            'userDailyDataComplete',
             'topSneezers',
             'userStats',
             'userSneezes',
