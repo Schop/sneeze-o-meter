@@ -32,10 +32,12 @@
                         </div>
                         <div class="col-6">
                             <label for="sneeze_time" class="form-label">{{ __('messages.record.time') }}</label>
-                            <input type="time" 
+                            <input type="text" 
                                    id="sneeze_time" 
                                    name="sneeze_time" 
                                    value="{{ old('sneeze_time') }}"
+                                   pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]"
+                                   placeholder="HH:MM (e.g., 14:30)"
                                    class="form-control form-control-lg">
                         </div>
                     </div>
