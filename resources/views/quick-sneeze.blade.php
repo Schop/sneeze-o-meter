@@ -35,7 +35,7 @@
                             <input type="time" 
                                    id="sneeze_time" 
                                    name="sneeze_time" 
-                                   value="{{ old('sneeze_time', now()->format('H:i')) }}"
+                                   value="{{ old('sneeze_time') }}"
                                    class="form-control form-control-lg">
                         </div>
                     </div>
@@ -119,10 +119,21 @@
         </div>
     </div>
 
-    @if(auth()->user()->use_precise_location)
     <script>
-        // Automatically detect location on page load
         document.addEventListener('DOMContentLoaded', function() {
+            // Set current local time
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const timeInput = document.getElementById('sneeze_time');
+            
+            // Only set if there's no old value (validation error)
+            if (!timeInput.value) {
+                timeInput.value = `${hours}:${minutes}`;
+            }
+
+            @if(auth()->user()->use_precise_location)
+            // Automatically detect location on page load
             const statusElement = document.getElementById('location-status');
             
             if (!navigator.geolocation) {
@@ -143,8 +154,8 @@
                     statusElement.innerHTML = '<i class="bi bi-x-circle text-danger"></i> {{ __('messages.record.location_denied') }}';
                 }
             );
+            @endif
         });
     </script>
-    @endif
 </body>
 </html>
