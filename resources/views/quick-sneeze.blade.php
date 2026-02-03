@@ -27,7 +27,7 @@
                             <input type="date" 
                                    id="sneeze_date" 
                                    name="sneeze_date" 
-                                   value="{{ old('sneeze_date', now()->format('Y-m-d')) }}"
+                                   value="{{ old('sneeze_date') }}"
                                    class="form-control form-control-lg">
                         </div>
                         <div class="col-6">
@@ -121,8 +121,21 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Set current local time
+            // Set current local date and time
             const now = new Date();
+            
+            // Set date
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const dateInput = document.getElementById('sneeze_date');
+            
+            // Only set if there's no old value (validation error)
+            if (!dateInput.value) {
+                dateInput.value = `${year}-${month}-${day}`;
+            }
+            
+            // Set time
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const timeInput = document.getElementById('sneeze_time');
