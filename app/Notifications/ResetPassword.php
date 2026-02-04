@@ -66,15 +66,12 @@ class ResetPassword extends Notification
      */
     protected function buildMailMessage($url)
     {
-        // Set locale for this notification
-        app()->setLocale('nl');
-        
         return (new MailMessage)
-            ->subject(__('messages.auth.reset_password_notification'))
-            ->line(__('messages.auth.password_reset_request'))
-            ->action(__('messages.auth.reset_password'), $url)
-            ->line(__('messages.auth.reset_link_expires', ['count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')]))
-            ->line(__('messages.auth.no_action_required'));
+            ->subject('Wachtwoord Reset Notificatie')
+            ->line('Je ontvangt deze e-mail omdat we een wachtwoord reset verzoek hebben ontvangen voor je account.')
+            ->action('Wachtwoord Resetten', $url)
+            ->line('Deze wachtwoord reset link verloopt over ' . config('auth.passwords.'.config('auth.defaults.passwords').'.expire') . ' minuten.')
+            ->line('Als je geen wachtwoord reset hebt aangevraagd, is geen verdere actie vereist.');
     }
 
     /**
