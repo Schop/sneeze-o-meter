@@ -501,6 +501,16 @@
                             beginAtZero: true,
                             ticks: { stepSize: 5 }
                         }
+                    },
+                    onClick: (event, elements) => {
+                        if (elements.length > 0) {
+                            const index = elements[0].index;
+                            const monthStr = labels[index];
+                            window.location.href = `/monthly-details/${monthStr}`;
+                        }
+                    },
+                    onHover: (event, elements) => {
+                        event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
                     }
                 }
             });
