@@ -291,8 +291,8 @@
         }
         
         function shareOnFacebook() {
-            // Use direct Facebook sharing URL for custom message
-            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(currentShareMessage)}`;
+            // Try mobile Facebook sharer which may work more reliably
+            const url = `https://m.facebook.com/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(currentShareMessage)}`;
             window.open(url, '_blank');
         }
         
