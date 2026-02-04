@@ -38,15 +38,8 @@
     }
 }
 
-// Fix pagination icon sizes
-.pagination {
-    svg {
-        width: 1rem;
-        height: 1rem;
-        vertical-align: middle;
-    }
-    
-    .page-link {
-        font-size: 0.75rem !important;
-    }
+// Fix pagination chevron sizes
+nav[aria-label="Pagination Navigation"] svg {
+    width: 1rem;
+    height: 1rem;
 }
