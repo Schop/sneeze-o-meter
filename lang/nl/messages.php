@@ -169,7 +169,7 @@ return [
     // Leaderboard
     'leaderboard' => [
         'title' => 'Klassement',
-        'top_sneezers' => 'Top Niezers',
+        'top_sneezers' => 'Ranglijst van de meest fervente niesers',
         'rank' => 'Rang',
         'name' => 'Naam',
         'total_sneezes' => 'Totaal niesen',
