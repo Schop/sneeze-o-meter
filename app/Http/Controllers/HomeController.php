@@ -48,15 +48,15 @@ class HomeController extends Controller
             ->limit(5)
             ->get();
         
-        // Today's top 5 sneezers
-        $todayTopSneezers = User::select('users.id', 'users.name')
+        // Today's top sneezer (leader only)
+        $todayTopSneezers = User::select('users.id', 'users.name', 'users.profile_picture')
             ->leftJoin('sneezes', 'users.id', '=', 'sneezes.user_id')
             ->where('users.show_in_leaderboard', true)
             ->whereDate('sneezes.sneeze_date', now()->toDateString())
-            ->groupBy('users.id', 'users.name')
+            ->groupBy('users.id', 'users.name', 'users.profile_picture')
             ->orderByRaw('SUM(COALESCE(sneezes.count, 0)) DESC')
             ->selectRaw('SUM(COALESCE(sneezes.count, 0)) as sneeze_count')
-            ->limit(5)
+            ->limit(1)
             ->get();
         
         // Yesterday's top 5 sneezers (or selected date)
@@ -85,7 +85,6 @@ class HomeController extends Controller
         
         // Get current user's stats if logged in
         $currentUserOverall = null;
-        $currentUserToday = null;
         $currentUserYesterday = null;
         $currentUserMonth = null;
         
@@ -114,26 +113,7 @@ class HomeController extends Controller
             }
             
             // Check if user is not in top 5 today and has opted in
-            if ($userOptedIn && !$todayTopSneezers->contains('id', $userId)) {
-                $currentUserToday = User::select('users.id', 'users.name')
-                    ->leftJoin('sneezes', 'users.id', '=', 'sneezes.user_id')
-                    ->whereDate('sneezes.sneeze_date', now()->toDateString())
-                    ->where('users.id', $userId)
-                    ->groupBy('users.id', 'users.name')
-                    ->selectRaw('SUM(COALESCE(sneezes.count, 0)) as sneeze_count')
-                    ->first();
-                
-                // Calculate rank
-                if ($currentUserToday) {
-                    $currentUserToday->rank = User::select('users.id')
-                        ->leftJoin('sneezes', 'users.id', '=', 'sneezes.user_id')
-                        ->where('users.show_in_leaderboard', true)
-                        ->whereDate('sneezes.sneeze_date', now()->toDateString())
-                        ->groupBy('users.id')
-                        ->havingRaw('SUM(COALESCE(sneezes.count, 0)) > ?', [$currentUserToday->sneeze_count])
-                        ->count() + 1;
-                }
-            }
+            // Removed - no longer needed since we only show the top leader
             
             // Check if user is not in top 5 yesterday and has opted in
             if ($userOptedIn && !$yesterdayTopSneezers->contains('id', $userId)) {
@@ -261,7 +241,6 @@ class HomeController extends Controller
             'yesterdayTopSneezers',
             'monthTopSneezers',
             'currentUserOverall',
-            'currentUserToday',
             'currentUserYesterday',
             'currentUserMonth',
             'topDay',

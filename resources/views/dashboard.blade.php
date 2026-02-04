@@ -3,12 +3,35 @@
     
     <div class="py-4">
 
-        <!-- Summary Statistics and Monthly Overview -->
+        <!-- Today's Stats, Monthly Overview, Summary Statistics, and Profile Picture -->
         <div class="row g-3 mb-4">
-            <div class="col-12 col-lg-6">
+            <div class="col-12 col-lg-3">
                 <div class="card shadow h-100">
                     <div class="card-body">
-                        <h5 class="text-muted mb-3"><i class="bi bi-clipboard-data"></i> {{ __('messages.dashboard.summary_statistics') }}</h5>
+                        <h5 class="text-muted mb-3">{{ __('messages.dashboard.today_stats') }}</h5>
+                        <table class="compact-stats-table w-100">
+                            <tbody>
+                                <tr>
+                                    <td>{{ __('messages.dashboard.today_sneezes') }}</td>
+                                    <td>{{ $todaySneezeCount }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ __('messages.dashboard.today_events') }}</td>
+                                    <td>{{ $todaySneezeEvents }}</td>
+                                </tr>
+                                <tr>
+                                    <td>{{ __('messages.dashboard.last_sneeze') }}</td>
+                                    <td>{{ $lastSneeze ? $lastSneeze->sneeze_time : __('messages.dashboard.no_sneezes_yet') }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-3">
+                <div class="card shadow h-100">
+                    <div class="card-body">
+                        <h5 class="text-muted mb-3">{{ __('messages.dashboard.summary_statistics') }}</h5>
                         <table class="compact-stats-table w-100">
                             <tbody>
                                 <tr>
@@ -32,7 +55,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6">
+            <div class="col-12 col-lg-3">
                 <div class="card shadow h-100">
                     <div class="card-body">
                         <h5 class="text-muted mb-3"><i class="bi bi-calendar-month"></i> {{ __('messages.dashboard.monthly_overview') }}</h5>
@@ -56,6 +79,23 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-3">
+                <div class="card shadow h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="text-muted mb-3 text-center"><i class="bi bi-person-circle"></i> {{ __('messages.dashboard.profile') }}</h5>
+                        <div class="text-center flex-grow-1 d-flex flex-column justify-content-center">
+                            <div class="mb-3">
+                                <img src="{{ auth()->user()->profile_picture_url }}" alt="{{ auth()->user()->name }}" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                            </div>
+                            <h6 class="mb-2">{{ auth()->user()->name }}</h6>
+                            <p class="text-muted small mb-3">{{ __('messages.dashboard.member_since') }} {{ auth()->user()->created_at->format('M Y') }}</p>
+                            <a href="{{ route('profile.edit') }}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-pencil"></i> {{ __('messages.dashboard.edit') }}
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

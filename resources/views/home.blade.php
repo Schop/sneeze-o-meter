@@ -22,27 +22,19 @@
             <div class="col-12 col-lg-3">
                 <div class="card shadow h-100">
                     <div class="card-body d-flex flex-column">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-calendar-day text-primary fs-3 me-2"></i>
+                        <div class="d-flex align-items-center justify-content-center mb-3">
                             <h5 class="mb-0">{{ __('messages.home.today_leader') }}</h5>
                         </div>
                         @if($todayTopSneezers->count() > 0)
-                            <div class="list-group list-group-flush flex-grow-1">
-                                @foreach($todayTopSneezers as $index => $sneezer)
-                                    <div class="list-group-item px-2 py-2 d-flex justify-content-between align-items-center @if(auth()->check() && $sneezer->id === auth()->id()) bg-info bg-opacity-10 @endif">
-                                        <span>
-                                            <strong>{{ $index + 1 }}</strong> {{ Str::limit($sneezer->name, 15) }} @if(auth()->check() && $sneezer->id === auth()->id()) ({{ __('messages.general.you') }}) @endif
-                                        </span>
-                                        <span>{{ $sneezer->sneeze_count }}</span>
-                                    </div>
-                                @endforeach
-                                @if($currentUserToday)
-                                    <div class="list-group-item px-2 py-2 d-flex justify-content-between align-items-center bg-info bg-opacity-10 border-top">
-                                        <span>
-                                            <strong>{{ $currentUserToday->rank }}</strong> {{ Str::limit($currentUserToday->name, 15) }} ({{ __('messages.general.you') }})
-                                        </span>
-                                        <span>{{ $currentUserToday->sneeze_count }}</span>
-                                    </div>
+                            @php $leader = $todayTopSneezers->first(); @endphp
+                            <div class="text-center flex-grow-1 d-flex flex-column justify-content-center">
+                                <div class="mb-3">
+                                    <img src="{{ $leader->profile_picture_url }}" alt="{{ $leader->name }}" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                                </div>
+                                <h5 class="mb-2">{{ $leader->name }}</h5>
+                                <div class="text-primary fw-bold fs-5">{{ $leader->sneeze_count }} {{ $leader->sneeze_count == 1 ? __('messages.home.sneeze') : __('messages.home.sneezes') }}</div>
+                                @if(auth()->check() && $leader->id === auth()->id())
+                                    <small class="text-muted">{{ __('messages.general.you') }}</small>
                                 @endif
                             </div>
                             <div class="mt-auto pt-3 text-center">
@@ -51,7 +43,12 @@
                                 </a>
                             </div>
                         @else
-                            <p class="text-muted">{{ __('messages.home.no_data') }}</p>
+                            <div class="text-center flex-grow-1 d-flex flex-column justify-content-center">
+                                <div class="mb-3">
+                                    <img src="{{ asset('images/avatar-placeholder.svg') }}" alt="No leader yet" class="rounded-circle opacity-50" style="width: 120px; height: 120px;">
+                                </div>
+                                <p class="text-muted">{{ __('messages.home.no_data') }}</p>
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -162,7 +159,7 @@
             <div class="col-12 col-lg-3">
                 <div class="card shadow h-100">
                     <div class="card-body d-flex flex-column">
-                        <div class="d-flex align-items-center mb-3">
+                        <div class="d-flex justify-content-center align-items-center mb-3">
                             <i class="bi bi-trophy-fill text-warning fs-3 me-2"></i>
                             <h5 class="mb-0">{{ __('messages.home.overall_leader') }}</h5>
                         </div>
@@ -561,7 +558,8 @@
                     const isCurrentUser = authUserId && sneezer.id === authUserId;
                     html += `
                         <div class="list-group-item px-2 py-2 d-flex justify-content-between align-items-center ${isCurrentUser ? 'bg-info bg-opacity-10' : ''}">
-                            <span>
+                            <span class="d-flex align-items-center">
+                                <img src="${sneezer.profile_picture_url}" alt="${sneezer.name}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
                                 <strong>${index + 1}</strong> ${sneezer.name}${isCurrentUser ? ' (' + youLabel + ')' : ''}
                             </span>
                             <span>${sneezer.sneeze_count} ${sneezesLabel}</span>
@@ -572,7 +570,8 @@
                 if (data.current_user) {
                     html += `
                         <div class="list-group-item px-2 py-2 d-flex justify-content-between align-items-center bg-info bg-opacity-10 border-top">
-                            <span>
+                            <span class="d-flex align-items-center">
+                                <img src="${data.current_user.profile_picture_url}" alt="${data.current_user.name}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
                                 <strong>${data.current_user.rank}</strong> ${data.current_user.name} (${youLabel})
                             </span>
                             <span>${data.current_user.sneeze_count} ${sneezesLabel}</span>
@@ -599,7 +598,8 @@
                     const isCurrentUser = authUserId && sneezer.id === authUserId;
                     html += `
                         <div class="list-group-item px-2 py-2 d-flex justify-content-between align-items-center ${isCurrentUser ? 'bg-info bg-opacity-10' : ''}">
-                            <span>
+                            <span class="d-flex align-items-center">
+                                <img src="${sneezer.profile_picture_url}" alt="${sneezer.name}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
                                 <strong>${index + 1}</strong> ${sneezer.name}${isCurrentUser ? ' (' + youLabel + ')' : ''}
                             </span>
                             <span>${sneezer.sneeze_count} ${sneezesLabel}</span>
@@ -610,7 +610,8 @@
                 if (data.current_user) {
                     html += `
                         <div class="list-group-item px-2 py-2 d-flex justify-content-between align-items-center bg-info bg-opacity-10 border-top">
-                            <span>
+                            <span class="d-flex align-items-center">
+                                <img src="${data.current_user.profile_picture_url}" alt="${data.current_user.name}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
                                 <strong>${data.current_user.rank}</strong> ${data.current_user.name} (${youLabel})
                             </span>
                             <span>${data.current_user.sneeze_count} ${sneezesLabel}</span>

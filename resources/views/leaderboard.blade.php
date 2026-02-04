@@ -65,7 +65,10 @@
                                         <strong>{{ $index + 1 }}</strong>
                                     </td>
                                     <td>
-                                        {{ $user->name }}
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ $user->profile_picture_url }}" alt="{{ $user->name }}" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                            {{ $user->name }}
+                                        </div>
                                     </td>
                                     <td>
                                         {{ $user->sneeze_count }}

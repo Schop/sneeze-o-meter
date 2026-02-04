@@ -25,6 +25,8 @@ class User extends Authenticatable
         'use_precise_location',
         'custom_locations',
         'show_in_leaderboard',
+        'profile_picture',
+        'gender',
     ];
 
     /**
@@ -51,6 +53,14 @@ class User extends Authenticatable
             'custom_locations' => 'array',
             'show_in_leaderboard' => 'boolean',
         ];
+    }
+
+    /**
+     * Get the profile picture URL with fallback to placeholder.
+     */
+    public function getProfilePictureUrlAttribute(): string
+    {
+        return $this->profile_picture ? asset('storage/' . $this->profile_picture) : asset('images/avatar-placeholder.svg');
     }
 
     /**

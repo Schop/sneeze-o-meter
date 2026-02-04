@@ -28,6 +28,8 @@ class ProfileUpdateRequest extends FormRequest
             'use_precise_location' => ['boolean'],
             'custom_locations' => ['nullable', 'string'],
             'show_in_leaderboard' => ['boolean'],
+            'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'gender' => ['nullable', 'string', 'max:50'],
         ];
     }
 }

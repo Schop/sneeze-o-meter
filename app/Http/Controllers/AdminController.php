@@ -100,6 +100,11 @@ class AdminController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'is_admin' => ['nullable', 'boolean'],
+            'use_precise_location' => ['nullable', 'boolean'],
+            'show_in_leaderboard' => ['nullable', 'boolean'],
+            'custom_locations' => ['nullable', 'string'],
+            'profile_picture' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'gender' => ['nullable', 'string', 'max:50'],
         ]);
 
         // Prevent removing admin status from the last admin
@@ -119,9 +124,31 @@ class AdminController extends Controller
                 ->withInput();
         }
 
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            // Delete old profile picture if exists
+            if ($user->profile_picture) {
+                \Storage::disk('public')->delete($user->profile_picture);
+            }
+            // Store new profile picture
+            $user->profile_picture = $request->file('profile_picture')->store('profile-pictures', 'public');
+        }
+
         $user->name = $request->name;
         $user->email = $request->email;
         $user->is_admin = $request->has('is_admin') && $request->is_admin;
+        $user->use_precise_location = $request->has('use_precise_location') && $request->use_precise_location;
+        $user->show_in_leaderboard = $request->has('show_in_leaderboard') && $request->show_in_leaderboard;
+        
+        // Parse custom locations if provided
+        if ($request->filled('custom_locations')) {
+            $locations = array_filter(array_map('trim', explode(',', $request->custom_locations)));
+            $user->custom_locations = !empty($locations) ? $locations : null;
+        } else {
+            $user->custom_locations = null;
+        }
+        
+        $user->gender = $request->gender;
         $user->save();
 
         return redirect()->route('admin.index')

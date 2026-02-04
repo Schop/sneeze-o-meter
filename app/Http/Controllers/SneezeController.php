@@ -42,7 +42,7 @@ class SneezeController extends Controller
         }
         
         // Build the query based on type
-        $query = User::select('users.id', 'users.name')
+        $query = User::select('users.id', 'users.name', 'users.profile_picture')
             ->where('users.show_in_leaderboard', true);
         
         if ($type === 'monthly') {
@@ -60,9 +60,9 @@ class SneezeController extends Controller
             $query->leftJoin('sneezes', 'users.id', '=', 'sneezes.user_id');
         }
         
-        $leaderboard = $query->groupBy('users.id', 'users.name')
+        $leaderboard = $query->groupBy('users.id', 'users.name', 'users.profile_picture')
             ->orderByRaw('SUM(COALESCE(sneezes.count, 0)) DESC')
-            ->selectRaw('SUM(COALESCE(sneezes.count, 0)) as sneeze_count')
+            ->selectRaw('users.id, users.name, users.profile_picture, SUM(COALESCE(sneezes.count, 0)) as sneeze_count')
             ->having('sneeze_count', '>', 0)
             ->get();
         
@@ -84,6 +84,7 @@ class SneezeController extends Controller
                     return [
                         'id' => $user->id,
                         'name' => $user->name,
+                        'profile_picture_url' => $user->profile_picture_url,
                         'sneeze_count' => $user->sneeze_count
                     ];
                 }),
@@ -323,6 +324,14 @@ class SneezeController extends Controller
             ? $lastSneeze->sneeze_date->format('d/m/Y') . ', ' . substr($lastSneeze->sneeze_time, 0, 5)
             : 'No sneezes yet';
 
+        // Today's statistics
+        $today = now()->format('Y-m-d');
+        $todaySneezes = $allSneezes->filter(function($sneeze) use ($today) {
+            return $sneeze->sneeze_date->format('Y-m-d') === $today;
+        });
+        $todaySneezeCount = $todaySneezes->sum('count');
+        $todaySneezeEvents = $todaySneezes->count();
+
         return view('dashboard', compact(
             'sneezes', 
             'totalSneezes',
@@ -354,7 +363,10 @@ class SneezeController extends Controller
             'heatmapData',
             'heatmapDataThisYear',
             'heatmapDataAllTime',
-            'lastSneezeFormatted'
+            'lastSneezeFormatted',
+            'lastSneeze',
+            'todaySneezeCount',
+            'todaySneezeEvents'
         ));
     }
 

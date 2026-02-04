@@ -39,6 +39,16 @@ class ProfileController extends Controller
         } else {
             $data['custom_locations'] = null;
         }
+
+        // Handle profile picture upload
+        if ($request->hasFile('profile_picture')) {
+            // Delete old profile picture if exists
+            if ($request->user()->profile_picture) {
+                \Storage::disk('public')->delete($request->user()->profile_picture);
+            }
+            // Store new profile picture
+            $data['profile_picture'] = $request->file('profile_picture')->store('profile-pictures', 'public');
+        }
         
         $request->user()->fill($data);
 
@@ -61,6 +71,11 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        // Delete profile picture if exists
+        if ($user->profile_picture) {
+            \Storage::disk('public')->delete($user->profile_picture);
+        }
 
         Auth::logout();
 
