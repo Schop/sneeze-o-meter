@@ -5,6 +5,7 @@ namespace App\Notifications;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Lang;
 
 class ResetPassword extends Notification
 {
@@ -67,12 +68,15 @@ class ResetPassword extends Notification
      */
     protected function buildMailMessage($url)
     {
+        // Set locale for this notification
+        app()->setLocale('nl');
+        
         return (new MailMessage)
-            ->subject(Lang::get('messages.auth.reset_password_notification'))
-            ->line(Lang::get('messages.auth.password_reset_request'))
-            ->action(Lang::get('messages.auth.reset_password'), $url)
-            ->line(Lang::get('messages.auth.reset_link_expires', ['count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')]))
-            ->line(Lang::get('messages.auth.no_action_required'));
+            ->subject(__('messages.auth.reset_password_notification'))
+            ->line(__('messages.auth.password_reset_request'))
+            ->action(__('messages.auth.reset_password'), $url)
+            ->line(__('messages.auth.reset_link_expires', ['count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')]))
+            ->line(__('messages.auth.no_action_required'));
     }
 
     /**
