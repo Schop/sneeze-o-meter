@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'name' => 'Naam',
+    'email' => 'E-mail',
+    'password' => 'Wachtwoord',
+    'confirm_password' => 'Bevestig Wachtwoord',
+    'remember_me' => 'Onthoud mij',
+    'forgot_password' => 'Wachtwoord vergeten?',
+    'already_registered' => 'Nog geen account?',
+    'log_in' => 'Inloggen',
+    'login' => 'Inloggen',
+    'register' => 'Registreren',
+    'reset_password' => 'Wachtwoord Resetten',
+    'send_reset_link' => 'Stuur Wachtwoord Reset Link',
+    'reset_password_notification' => 'Wachtwoord Reset Notificatie',
+    'password_reset_request' => 'Je ontvangt deze e-mail omdat we een wachtwoord reset verzoek hebben ontvangen voor je account.',
+    'reset_link_expires' => 'Deze wachtwoord reset link verloopt over :count minuten.',
+    'no_action_required' => 'Als je geen wachtwoord reset hebt aangevraagd, is geen verdere actie vereist.',
+    'verify_email' => 'E-mail verifiëren',
+    'use_precise_location' => 'Locatiebijhouden toestaan',
+    'use_precise_location_help' => 'Wanneer ingeschakeld, worden uw exacte coördinaten vastgelegd wanneer u niesen registreert. Alleen u kunt deze gegevens zien.',
+    'show_in_leaderboard' => 'Mij opnemen in de openbare ranglijst',
+    'show_in_leaderboard_help' => 'Wanneer ingeschakeld, verschijnt uw naam in de openbare ranglijstbeoordelingen.',
+    'agree_terms' => 'Ik ga akkoord met de voorwaarden',
+    'agree_terms_help' => 'U moet akkoord gaan met onze voorwaarden om een account te maken.',
+];

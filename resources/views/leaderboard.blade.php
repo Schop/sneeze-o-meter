@@ -105,9 +105,14 @@
                         {{ __('messages.home.go_to_dashboard') }}
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="btn btn-primary">
-                        {{ __('messages.leaderboard.login_to_track') }}
-                    </a>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('login') }}" class="btn btn-primary">
+                            {{ __('messages.leaderboard.login_to_track') }}
+                        </a>
+                        <a href="{{ route('register') }}" class="btn btn-outline-primary">
+                            {{ __('auth.register') }}
+                        </a>
+                    </div>
                 @endauth
             </div>
         </div>

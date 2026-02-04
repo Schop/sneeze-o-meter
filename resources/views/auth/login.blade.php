@@ -41,4 +41,10 @@
             </x-primary-button>
         </div>
     </form>
+
+    <div class="mt-3 text-center">
+        <p class="mb-0">{{ __('auth.already_registered') }}
+            <a href="{{ route('register') }}" class="text-decoration-none">{{ __('auth.register') }}</a>
+        </p>
+    </div>
 </x-guest-layout>
