@@ -166,6 +166,7 @@ return [
     // Leaderboard
     'leaderboard' => [
         'title' => 'Leaderboard',
+        'description' => 'Check out the top sneezers on :app! See who\'s leading the sneezing competition.',
         'top_sneezers' => 'Top Sneezers',
         'rank' => 'Rank',
         'name' => 'Name',

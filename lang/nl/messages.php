@@ -168,6 +168,7 @@ return [
     // Leaderboard
     'leaderboard' => [
         'title' => 'Klassement',
+        'description' => 'Bekijk de beste niesers op :app! Zie wie de leiding neemt in de nieswedstrijd.',
         'top_sneezers' => 'Ranglijst van de meest fervente niesers',
         'rank' => 'Rang',
         'name' => 'Naam',

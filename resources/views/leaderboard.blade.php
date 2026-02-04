@@ -1,6 +1,13 @@
 <x-app-layout>
     <x-slot name="title">{{ __('messages.leaderboard.title') }}</x-slot>
     
+    <!-- Open Graph Meta Tags for Social Sharing -->
+    <meta property="og:title" content="{{ __('messages.leaderboard.title') }} - {{ config('app.name') }}">
+    <meta property="og:description" content="{{ __('messages.leaderboard.description', ['app' => config('app.name')]) }}">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    
     <div class="card">
         <div class="card-body">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -239,18 +246,18 @@
             
             if (type === 'all') {
                 message = locale === 'nl' 
-                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de all-time ranglijst bij Sneeze-o-Meter! 🏆`
-                    : `I achieved ${getOrdinal(position)} place on the all-time leaderboard at Sneeze-o-Meter! 🏆`;
+                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de all-time ranglijst bij Sneeze-o-Meter!`
+                    : `I achieved ${getOrdinal(position)} place on the all-time leaderboard at Sneeze-o-Meter!`;
             } else if (type === 'monthly') {
                 const monthName = new Date(period).toLocaleDateString(locale === 'nl' ? 'nl-NL' : 'en-US', { month: 'long', year: 'numeric' });
                 message = locale === 'nl'
-                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de ${monthName} ranglijst bij Sneeze-o-Meter! 🏆`
-                    : `I achieved ${getOrdinal(position)} place on the ${monthName} leaderboard at Sneeze-o-Meter! 🏆`;
+                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de ${monthName} ranglijst bij Sneeze-o-Meter!`
+                    : `I achieved ${getOrdinal(position)} place on the ${monthName} leaderboard at Sneeze-o-Meter!`;
             } else if (type === 'daily') {
                 const dateStr = new Date(period).toLocaleDateString(locale === 'nl' ? 'nl-NL' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 message = locale === 'nl'
-                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de ${dateStr} ranglijst bij Sneeze-o-Meter! 🏆`
-                    : `I achieved ${getOrdinal(position)} place on the ${dateStr} leaderboard at Sneeze-o-Meter! 🏆`;
+                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de ${dateStr} ranglijst bij Sneeze-o-Meter!`
+                    : `I achieved ${getOrdinal(position)} place on the ${dateStr} leaderboard at Sneeze-o-Meter!`;
             }
             
             currentShareMessage = message + ' ' + baseUrl;
@@ -281,7 +288,7 @@
         }
         
         function shareOnFacebook() {
-            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(currentShareMessage)}`;
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
             window.open(url, '_blank');
         }
         
