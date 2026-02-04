@@ -52,7 +52,7 @@
                                 <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}" class="img-fluid" style="height: clamp(80px, 15vw, 180px); cursor: pointer;">
                             </a>
                         </div>
-                        <div class="col px-2 px-md-5">
+                        <div class="col-auto px-2 px-md-5">
                             <h1 style="font-size: clamp(1.5rem, 5vw, 4.5rem);">
                                 <a href="{{ route('home') }}" class="text-decoration-none" style="cursor: pointer;"><b>{{ config('app.name') }}</b></a>
                             </h1>
