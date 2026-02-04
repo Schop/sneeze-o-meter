@@ -44,3 +44,4 @@ vendor.zip
 # Database files
 database/*.sqlite
 database/*.csv
+redirect.html
