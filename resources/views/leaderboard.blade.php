@@ -60,7 +60,7 @@
                         </thead>
                         <tbody>
                             @foreach($leaderboard as $index => $user)
-                                <tr class="{{ $index < 3 ? 'table-warning' : '' }}">
+                                <tr class="{{ auth()->check() && auth()->id() === $user->id ? 'table-info' : '' }}">
                                     <td>
                                         <strong>{{ $index + 1 }}</strong>
                                     </td>
@@ -157,11 +157,13 @@
             }
             
             const tbody = document.querySelector('#leaderboardTable tbody');
+            const currentUserId = @auth {{ auth()->id() }} @else null @endauth;
+            
             if (data.leaderboard.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="3" class="text-muted">{{ __('messages.leaderboard.no_sneezes') }}</td></tr>';
             } else {
                 tbody.innerHTML = data.leaderboard.map((user, index) => `
-                    <tr class="${index < 3 ? 'table-warning' : ''}">
+                    <tr class="${currentUserId && currentUserId === user.id ? 'table-info' : ''}">
                         <td><strong>${index + 1}</strong></td>
                         <td>${user.name}</td>
                         <td>${user.sneeze_count}</td>

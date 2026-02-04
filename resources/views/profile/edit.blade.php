@@ -3,9 +3,6 @@
     
     <div class="py-4">
         <div class="container">
-            <div class="mb-4">
-                <h2 class="fw-bold text-primary">{{ __('messages.profile.title') }}</h2>
-            </div>
 
             <div class="row g-4 mb-4">
                 <div class="col-12 col-lg-6">

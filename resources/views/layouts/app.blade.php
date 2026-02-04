@@ -26,42 +26,49 @@
     <body class="bg-light">
         <div class="min-vh-100">
             <div class="container my-4">
-                <div class="bg-white rounded-4 shadow-lg p-4 pb-2">
+                <div class="bg-white rounded-4 shadow-lg p-2 p-sm-3 p-md-4 pb-2">
                     <!-- Language Switcher -->
                     <div class="d-flex justify-content-end mb-2">
-                        <div class="btn-group btn-group-sm" role="group">
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Language switcher">
                             <a href="{{ route('language.switch', 'en') }}" 
                                class="btn {{ app()->getLocale() == 'en' ? 'btn-primary' : 'btn-outline-secondary' }} d-flex align-items-center gap-1" 
                                title="English">
                                 <span class="fi fi-gb" style="width: 1.2em; height: 1.2em; border-radius: 2px;"></span>
-                                <span>EN</span>
+                                <span class="d-none d-sm-inline">EN</span>
                             </a>
                             <a href="{{ route('language.switch', 'nl') }}" 
                                class="btn {{ app()->getLocale() == 'nl' ? 'btn-primary' : 'btn-outline-secondary' }} d-flex align-items-center gap-1" 
                                title="Nederlands">
                                 <span class="fi fi-nl" style="width: 1.2em; height: 1.2em; border-radius: 2px;"></span>
-                                <span>NL</span>
+                                <span class="d-none d-sm-inline">NL</span>
                             </a>
                         </div>
                     </div>
                     
                     <!-- Header with logo and title -->
-                    <div class="row align-items-center mb-4">
-                        <div class="col-auto px-5">
+                    <div class="row align-items-center mb-4 g-3">
+                        <div class="col-auto px-2 px-md-5">
                             <a href="{{ route('home') }}">
-                                <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}" style="height: 180px; cursor: pointer;">
+                                <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name') }}" class="img-fluid" style="height: clamp(80px, 15vw, 180px); cursor: pointer;">
                             </a>
                         </div>
-                        <div class="col-auto px-5">
-                            <h1 style="font-size: clamp(2rem, 5vw, 4.5rem);">
+                        <div class="col px-2 px-md-5">
+                            <h1 style="font-size: clamp(1.5rem, 5vw, 4.5rem);">
                                 <a href="{{ route('home') }}" class="text-decoration-none" style="cursor: pointer;"><b>{{ config('app.name') }}</b></a>
                             </h1>
-                            <p class="text-muted fs-3 mb-0 px-2 text-end">{{ __('messages.general.tagline') }}</p>
+                            <p class="text-muted mb-0 px-2 text-end" style="font-size: clamp(0.875rem, 2vw, 1.5rem);">{{ __('messages.general.tagline') }}</p>
                         </div>
                     </div>
                     
                     <!-- Navigation Menu -->
                     @include('layouts.navigation')
+                    
+                    <!-- Page Title for Mobile -->
+                    @isset($title)
+                        <div class="d-lg-none mt-3 mb-2">
+                            <h2 class="h4 text-center text-primary mb-0">{{ $title }}</h2>
+                        </div>
+                    @endisset
                 </div>
             </div>
 

@@ -43,14 +43,21 @@ class SneezeController extends Controller
         
         // Build the query based on type
         $query = User::select('users.id', 'users.name')
-            ->where('users.show_in_leaderboard', true)
-            ->leftJoin('sneezes', 'users.id', '=', 'sneezes.user_id');
+            ->where('users.show_in_leaderboard', true);
         
         if ($type === 'monthly') {
-            $query->whereYear('sneezes.sneeze_date', '=', \Carbon\Carbon::parse($period)->year)
-                  ->whereMonth('sneezes.sneeze_date', '=', \Carbon\Carbon::parse($period)->month);
+            $query->leftJoin('sneezes', function($join) use ($period) {
+                $join->on('users.id', '=', 'sneezes.user_id')
+                     ->whereYear('sneezes.sneeze_date', '=', \Carbon\Carbon::parse($period)->year)
+                     ->whereMonth('sneezes.sneeze_date', '=', \Carbon\Carbon::parse($period)->month);
+            });
         } else if ($type === 'daily') {
-            $query->whereDate('sneezes.sneeze_date', '=', $period);
+            $query->leftJoin('sneezes', function($join) use ($period) {
+                $join->on('users.id', '=', 'sneezes.user_id')
+                     ->whereDate('sneezes.sneeze_date', '=', $period);
+            });
+        } else {
+            $query->leftJoin('sneezes', 'users.id', '=', 'sneezes.user_id');
         }
         
         $leaderboard = $query->groupBy('users.id', 'users.name')
@@ -75,6 +82,7 @@ class SneezeController extends Controller
             return response()->json([
                 'leaderboard' => $leaderboard->map(function($user) {
                     return [
+                        'id' => $user->id,
                         'name' => \Illuminate\Support\Str::limit($user->name, 15),
                         'sneeze_count' => $user->sneeze_count
                     ];

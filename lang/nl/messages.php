@@ -20,7 +20,7 @@ return [
         'logout' => 'Uitloggen',
         'login' => 'Inloggen',
         'register' => 'Registreren',
-        'record_sneeze' => 'Nies Loggen',
+        'record_sneeze' => 'Nies vastleggen',
     ],
 
     // Auth
