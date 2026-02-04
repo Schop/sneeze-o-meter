@@ -287,23 +287,22 @@
         
         function shareOnWhatsApp() {
             const url = `https://wa.me/?text=${encodeURIComponent(currentShareMessage)}`;
-            window.open(url, '_blank');
+            window.open(url, '_blank', 'width=600,height=400');
         }
         
         function shareOnFacebook() {
-            // Try mobile Facebook sharer which sometimes works better
-            const url = `https://m.facebook.com/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(currentShareMessage)}`;
-            window.open(url, '_blank');
+            // Navigate directly to Facebook sharer
+            window.location.href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
         }
         
         function shareOnTwitter() {
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareMessage)}`;
-            window.open(url, '_blank');
+            window.location.href = url;
         }
         
         function shareOnLinkedIn() {
-            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
-            window.open(url, '_blank');
+            // Navigate directly to LinkedIn sharer
+            window.location.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(currentShareMessage)}`;
         }
         
         function copyToClipboard() {
