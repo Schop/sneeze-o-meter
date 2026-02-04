@@ -38,9 +38,18 @@
                                 @endif
                             </div>
                             <div class="mt-auto pt-3 text-center">
-                                <a href="{{ route('leaderboard') }}?type=daily" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-trophy"></i> {{ __('messages.home.view_full_leaderboard') }}
-                                </a>
+                                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                    <a href="{{ route('leaderboard') }}?type=daily" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-trophy"></i> {{ __('messages.home.view_full_leaderboard') }}
+                                    </a>
+                                    @auth
+                                    @if($leader && $leader->id === auth()->id())
+                                    <button class="btn btn-sm btn-success" onclick="openShareModal(1, 'daily', '{{ \Carbon\Carbon::today()->format('Y-m-d') }}')">
+                                        <i class="bi bi-share"></i> {{ __('messages.leaderboard.share') }}
+                                    </button>
+                                    @endif
+                                    @endauth
+                                </div>
                             </div>
                         @else
                             <div class="text-center flex-grow-1 d-flex flex-column justify-content-center">
@@ -97,9 +106,18 @@
                                 @endif
                             </div>
                             <div class="mt-auto pt-3 text-center">
-                                <a href="{{ route('leaderboard') }}?type=daily" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-trophy"></i> {{ __('messages.home.view_full_leaderboard') }}
-                                </a>
+                                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                    <a href="{{ route('leaderboard') }}?type=daily" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-trophy"></i> {{ __('messages.home.view_full_leaderboard') }}
+                                    </a>
+                                    @auth
+                                    @if($currentUserYesterday && $currentUserYesterday->rank <= 10)
+                                    <button class="btn btn-sm btn-success" onclick="openShareModal({{ $currentUserYesterday->rank }}, 'daily', '{{ $selectedDate }}')">
+                                        <i class="bi bi-share"></i> {{ __('messages.leaderboard.share') }}
+                                    </button>
+                                    @endif
+                                    @endauth
+                                </div>
                             </div>
                         @else
                             <p class="text-muted">{{ __('messages.home.no_data') }}</p>
@@ -144,9 +162,18 @@
                                 @endif
                             </div>
                             <div class="mt-auto pt-3 text-center">
-                                <a href="{{ route('leaderboard') }}?type=monthly" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-trophy"></i> {{ __('messages.home.view_full_leaderboard') }}
-                                </a>
+                                <div class="d-flex gap-2 justify-content-center flex-wrap">
+                                    <a href="{{ route('leaderboard') }}?type=monthly" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-trophy"></i> {{ __('messages.home.view_full_leaderboard') }}
+                                    </a>
+                                    @auth
+                                    @if($currentUserMonth && $currentUserMonth->rank <= 10)
+                                    <button class="btn btn-sm btn-success" onclick="openShareModal({{ $currentUserMonth->rank }}, 'monthly', '{{ $selectedMonth }}')">
+                                        <i class="bi bi-share"></i> {{ __('messages.leaderboard.share') }}
+                                    </button>
+                                    @endif
+                                    @endauth
+                                </div>
                             </div>
                         @else
                             <p class="text-muted">{{ __('messages.home.no_data') }}</p>
@@ -635,6 +662,118 @@
             const newURL = `${window.location.pathname}?${params.toString()}`;
             history.pushState({ date: currentDate, month: currentMonth }, '', newURL);
         }
+        
+        // Sharing functions
+        let currentShareMessage = '';
+        
+        function openShareModal(position, type, period) {
+            let message = '';
+            const baseUrl = window.location.origin;
+            const locale = '{{ app()->getLocale() }}';
+            
+            if (type === 'daily') {
+                const dateStr = new Date(period).toLocaleDateString(locale === 'nl' ? 'nl-NL' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                message = locale === 'nl'
+                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de ${dateStr} ranglijst bij Sneeze-o-Meter!`
+                    : `I achieved ${getOrdinal(position)} place on the ${dateStr} leaderboard at Sneeze-o-Meter!`;
+            } else if (type === 'monthly') {
+                const monthName = new Date(period).toLocaleDateString(locale === 'nl' ? 'nl-NL' : 'en-US', { month: 'long', year: 'numeric' });
+                message = locale === 'nl'
+                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de ${monthName} ranglijst bij Sneeze-o-Meter!`
+                    : `I achieved ${getOrdinal(position)} place on the ${monthName} leaderboard at Sneeze-o-Meter!`;
+            }
+            
+            currentShareMessage = message + ' ' + baseUrl;
+            showShareDialog(currentShareMessage);
+        }
+        
+        function getOrdinal(n) {
+            if (n === 1) return '1e';
+            if (n === 2) return '2e'; 
+            if (n === 3) return '3e';
+            return n + 'e';
+        }
+        
+        function showShareDialog(message) {
+            // Use Web Share API if available, otherwise show modal
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Sneeze-o-Meter Leaderboard',
+                    text: message,
+                    url: window.location.href
+                }).catch(() => {
+                    // Fallback to modal
+                    document.getElementById('shareMessage').textContent = message;
+                    const modal = new bootstrap.Modal(document.getElementById('shareModal'));
+                    modal.show();
+                });
+            } else {
+                // Show modal with sharing options
+                document.getElementById('shareMessage').textContent = message;
+                const modal = new bootstrap.Modal(document.getElementById('shareModal'));
+                modal.show();
+            }
+        }
+        
+        function shareOnWhatsApp() {
+            const url = `https://wa.me/?text=${encodeURIComponent(currentShareMessage)}`;
+            window.open(url, '_blank');
+        }
+        
+        function shareOnFacebook() {
+            const url = `https://m.facebook.com/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(currentShareMessage)}`;
+            window.open(url, '_blank');
+        }
+        
+        function shareOnTwitter() {
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareMessage)}`;
+            window.open(url, '_blank');
+        }
+        
+        function shareOnLinkedIn() {
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(currentShareMessage)}`;
+            window.open(url, '_blank');
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Simple feedback - could be enhanced with a toast notification
+                alert('{{ __("messages.leaderboard.share_achievement") }} copied to clipboard!');
+            });
+        }
     </script>
+    
+    <!-- Share Modal -->
+    <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shareModalLabel">{{ __('messages.leaderboard.share_achievement') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="shareMessage"></p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-success btn-sm" onclick="shareOnWhatsApp()">
+                            <i class="bi bi-whatsapp"></i> WhatsApp
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="shareOnFacebook()">
+                            <i class="bi bi-facebook"></i> Facebook
+                        </button>
+                        <button class="btn btn-info btn-sm" onclick="shareOnTwitter()">
+                            <i class="bi bi-twitter"></i> Twitter
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="shareOnLinkedIn()">
+                            <i class="bi bi-linkedin"></i> LinkedIn
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="copyToClipboard(currentShareMessage)">
+                            <i class="bi bi-clipboard"></i> {{ __('messages.general.copy') }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     @endpush
 </x-app-layout>
