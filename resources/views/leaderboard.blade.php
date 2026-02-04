@@ -56,6 +56,9 @@
                                 <th scope="col">
                                     {{ __('messages.leaderboard.total_sneezes') }}
                                 </th>
+                                <th scope="col">
+                                    {{ __('messages.leaderboard.share') }}
+                                </th>
                             </tr>
                         </thead>
                         <tbody>
@@ -72,6 +75,15 @@
                                     </td>
                                     <td>
                                         {{ $user->sneeze_count }}
+                                    </td>
+                                    <td>
+                                        @auth
+                                            @if(auth()->id() === $user->id)
+                                                <button type="button" class="btn btn-sm btn-outline-primary" onclick="openShareModal({{ $index + 1 }}, '{{ $type }}', '{{ $period }}')">
+                                                    <i class="bi bi-share"></i>
+                                                </button>
+                                            @endif
+                                        @endauth
                                     </td>
                                 </tr>
                             @endforeach
@@ -90,6 +102,35 @@
                         {{ __('messages.leaderboard.login_to_track') }}
                     </a>
                 @endauth
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shareModalLabel">{{ __('messages.leaderboard.share_achievement') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="shareMessage"></p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-success btn-sm" onclick="shareOnWhatsApp()">
+                            <i class="bi bi-whatsapp"></i> WhatsApp
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="shareOnFacebook()">
+                            <i class="bi bi-facebook"></i> Facebook
+                        </button>
+                        <button class="btn btn-info btn-sm" onclick="shareOnTwitter()">
+                            <i class="bi bi-twitter"></i> Twitter
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="copyToClipboard()">
+                            <i class="bi bi-clipboard"></i> {{ __('messages.general.copy') }}
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -119,7 +160,8 @@
                     infoFiltered: "{{ __('messages.datatables.filtered_users') }}"
                 },
                 columnDefs: [
-                    { orderable: false, targets: 0 } // Disable sorting on rank column
+                    { orderable: false, targets: 0 }, // Disable sorting on rank column
+                    { orderable: false, targets: 3 }  // Disable sorting on share column
                 ]
             });
         }
@@ -163,13 +205,21 @@
             const currentUserId = @auth {{ auth()->id() }} @else null @endauth;
             
             if (data.leaderboard.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" class="text-muted">{{ __('messages.leaderboard.no_sneezes') }}</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="text-muted">{{ __('messages.leaderboard.no_sneezes') }}</td></tr>';
             } else {
                 tbody.innerHTML = data.leaderboard.map((user, index) => `
                     <tr class="${currentUserId && currentUserId === user.id ? 'table-info' : ''}">
                         <td><strong>${index + 1}</strong></td>
-                        <td>${user.name}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="${user.profile_picture_url}" alt="${user.name}" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;">
+                                ${user.name}
+                            </div>
+                        </td>
                         <td>${user.sneeze_count}</td>
+                        <td>
+                            ${currentUserId && currentUserId === user.id ? `<button type="button" class="btn btn-sm btn-outline-primary" onclick="openShareModal(${index + 1}, '${currentType}', '${currentPeriod}')"><i class="bi bi-share"></i></button>` : ''}
+                        </td>
                     </tr>
                 `).join('');
             }
@@ -178,6 +228,82 @@
             if (data.leaderboard.length > 0) {
                 initDataTable();
             }
+        }
+        
+        let currentShareMessage = '';
+        
+        function openShareModal(position, type, period) {
+            let message = '';
+            const baseUrl = window.location.origin;
+            const locale = '{{ app()->getLocale() }}';
+            
+            if (type === 'all') {
+                message = locale === 'nl' 
+                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de all-time ranglijst bij Sneeze-o-Meter! 🏆`
+                    : `I achieved ${getOrdinal(position)} place on the all-time leaderboard at Sneeze-o-Meter! 🏆`;
+            } else if (type === 'monthly') {
+                const monthName = new Date(period).toLocaleDateString(locale === 'nl' ? 'nl-NL' : 'en-US', { month: 'long', year: 'numeric' });
+                message = locale === 'nl'
+                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de ${monthName} ranglijst bij Sneeze-o-Meter! 🏆`
+                    : `I achieved ${getOrdinal(position)} place on the ${monthName} leaderboard at Sneeze-o-Meter! 🏆`;
+            } else if (type === 'daily') {
+                const dateStr = new Date(period).toLocaleDateString(locale === 'nl' ? 'nl-NL' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                message = locale === 'nl'
+                    ? `Ik heb de ${getOrdinal(position)} plaats behaald op de ${dateStr} ranglijst bij Sneeze-o-Meter! 🏆`
+                    : `I achieved ${getOrdinal(position)} place on the ${dateStr} leaderboard at Sneeze-o-Meter! 🏆`;
+            }
+            
+            currentShareMessage = message + ' ' + baseUrl;
+            document.getElementById('shareMessage').textContent = currentShareMessage;
+            
+            const modal = new bootstrap.Modal(document.getElementById('shareModal'));
+            modal.show();
+        }
+        
+        function getOrdinal(n) {
+            const locale = '{{ app()->getLocale() }}';
+            if (locale === 'nl') {
+                return n + 'e'; // Dutch ordinal is just number + 'e'
+            } else {
+                // English ordinals
+                const j = n % 10;
+                const k = n % 100;
+                if (j == 1 && k != 11) return n + 'st';
+                if (j == 2 && k != 12) return n + 'nd';
+                if (j == 3 && k != 13) return n + 'rd';
+                return n + 'th';
+            }
+        }
+        
+        function shareOnWhatsApp() {
+            const url = `https://wa.me/?text=${encodeURIComponent(currentShareMessage)}`;
+            window.open(url, '_blank');
+        }
+        
+        function shareOnFacebook() {
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin)}&quote=${encodeURIComponent(currentShareMessage)}`;
+            window.open(url, '_blank');
+        }
+        
+        function shareOnTwitter() {
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareMessage)}`;
+            window.open(url, '_blank');
+        }
+        
+        function copyToClipboard() {
+            navigator.clipboard.writeText(currentShareMessage).then(() => {
+                // Show success feedback
+                const btn = event.target.closest('button');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                btn.classList.remove('btn-secondary');
+                btn.classList.add('btn-success');
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-secondary');
+                }, 2000);
+            });
         }
     </script>
     @endpush

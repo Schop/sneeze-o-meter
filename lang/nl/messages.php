@@ -7,8 +7,7 @@ return [
         'welcome' => 'Welkom bij Sneeze-o-Meter',
         'tagline' => 'een kroniek van niesbuien',
         'language' => 'Taal',
-        'you' => 'Jij',
-    ],
+        'you' => 'Jij',        'copy' => 'Kopiëren',    ],
     // Navigation
     'nav' => [
         'home' => 'Home',
@@ -178,6 +177,11 @@ return [
         'all_time' => 'Alle Tijd',
         'monthly' => 'Maandelijks',
         'daily' => 'Dagelijks',
+        'share' => 'Delen',
+        'share_achievement' => 'Prestatie Delen',
+        'share_message_all_time' => 'Ik heb de :position plaats behaald op de all-time ranglijst bij sneeze-o-meter.com! 🏆',
+        'share_message_monthly' => 'Ik heb de :position plaats behaald op de :month ranglijst bij sneeze-o-meter.com! 🏆',
+        'share_message_daily' => 'Ik heb de :position plaats behaald op de :date ranglijst bij sneeze-o-meter.com! 🏆',
     ],
 
     // Admin

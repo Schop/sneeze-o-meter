@@ -7,6 +7,7 @@ return [
         'tagline' => 'a chronicle of sneezes',
         'language' => 'Language',
         'you' => 'You',
+        'copy' => 'Copy',
     ],
 
     // Navigation
@@ -174,6 +175,11 @@ return [
         'all_time' => 'All Time',
         'monthly' => 'Monthly',
         'daily' => 'Daily',
+        'share' => 'Share',
+        'share_achievement' => 'Share Achievement',
+        'share_message_all_time' => 'I achieved :position place on the all-time leaderboard at sneeze-o-meter.com! 🏆',
+        'share_message_monthly' => 'I achieved :position place on the :month leaderboard at sneeze-o-meter.com! 🏆',
+        'share_message_daily' => 'I achieved :position place on the :date leaderboard at sneeze-o-meter.com! 🏆',
     ],
 
     // Admin
