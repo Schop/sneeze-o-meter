@@ -65,7 +65,7 @@
                                         <strong>{{ $index + 1 }}</strong>
                                     </td>
                                     <td>
-                                        {{ Str::limit($user->name, 15) }}
+                                        {{ $user->name }}
                                     </td>
                                     <td>
                                         {{ $user->sneeze_count }}

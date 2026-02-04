@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sneeze-O-Meter Moved</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f4f4f4;
+        }
+        .message {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .link {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .countdown {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://sneeze-o-meter.com">
+        <img src="https://sneeze-o-meter.com/images/logo.png" alt="Sneeze-O-Meter Logo" style="max-width: 200px; margin-bottom: 20px;">
+    </a>
+    <div class="message">
+        The Sneeze-O-Meter has moved to <a href="https://sneeze-o-meter.com" class="link">https://sneeze-o-meter.com</a>
+    </div>
+    <p>You will be redirected in <span id="countdown">5</span> seconds.</p>
+    <script>
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+        const interval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            if (countdown <= 0) {
+                clearInterval(interval);
+                window.location.href = 'https://sneeze-o-meter.com';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

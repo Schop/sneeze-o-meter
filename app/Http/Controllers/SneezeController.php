@@ -83,7 +83,7 @@ class SneezeController extends Controller
                 'leaderboard' => $leaderboard->map(function($user) {
                     return [
                         'id' => $user->id,
-                        'name' => \Illuminate\Support\Str::limit($user->name, 15),
+                        'name' => $user->name,
                         'sneeze_count' => $user->sneeze_count
                     ];
                 }),
