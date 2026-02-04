@@ -290,59 +290,21 @@
             window.open(url, '_blank', 'width=600,height=400');
         }
         
-        async function shareOnFacebook() {
-            // Try Web Share API first, fallback to traditional sharing
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Sneeze-o-Meter Leaderboard',
-                        text: currentShareMessage,
-                        url: window.location.href
-                    });
-                    return;
-                } catch (error) {
-                    // User cancelled or error, fall back to traditional method
-                }
-            }
-            // Fallback: Open in new tab
-            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+        function shareOnFacebook() {
+            // Use direct Facebook sharing URL for custom message
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(currentShareMessage)}`;
             window.open(url, '_blank');
         }
         
-        async function shareOnTwitter() {
-            // Try Web Share API first, fallback to traditional sharing
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Sneeze-o-Meter Leaderboard',
-                        text: currentShareMessage,
-                        url: window.location.href
-                    });
-                    return;
-                } catch (error) {
-                    // User cancelled or error, fall back to traditional method
-                }
-            }
+        function shareOnTwitter() {
+            // Use direct Twitter sharing URL for custom message
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareMessage)}`;
             window.open(url, '_blank');
         }
         
-        async function shareOnLinkedIn() {
-            // Try Web Share API first, fallback to traditional sharing
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Sneeze-o-Meter Leaderboard',
-                        text: currentShareMessage,
-                        url: window.location.href
-                    });
-                    return;
-                } catch (error) {
-                    // User cancelled or error, fall back to traditional method
-                }
-            }
-            // Fallback: Open in new tab
-            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
+        function shareOnLinkedIn() {
+            // Use direct LinkedIn sharing URL
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(currentShareMessage)}`;
             window.open(url, '_blank');
         }
         
