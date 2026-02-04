@@ -133,6 +133,9 @@
                         <button class="btn btn-info btn-sm" onclick="shareOnTwitter()">
                             <i class="bi bi-twitter"></i> Twitter
                         </button>
+                        <button class="btn btn-primary btn-sm" onclick="shareOnLinkedIn()">
+                            <i class="bi bi-linkedin"></i> LinkedIn
+                        </button>
                         <button class="btn btn-secondary btn-sm" onclick="copyToClipboard()">
                             <i class="bi bi-clipboard"></i> {{ __('messages.general.copy') }}
                         </button>
@@ -288,12 +291,18 @@
         }
         
         function shareOnFacebook() {
-            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+            // Try mobile Facebook sharer which sometimes works better
+            const url = `https://m.facebook.com/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(currentShareMessage)}`;
             window.open(url, '_blank');
         }
         
         function shareOnTwitter() {
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(currentShareMessage)}`;
+            window.open(url, '_blank');
+        }
+        
+        function shareOnLinkedIn() {
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`;
             window.open(url, '_blank');
         }
         
