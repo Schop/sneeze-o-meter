@@ -2,6 +2,21 @@
     <x-slot name="title">{{ __('messages.home.title') }}</x-slot>
     
     <div class="py-4">
+        @guest
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="alert alert-info text-center mx-auto"">
+                    <strong>{{ __('messages.home.cta_guest_title') }}</strong><br>
+                    {{ __('messages.home.cta_guest_subtitle') }}<br>
+                    <span class="d-block mt-2">
+                        <strong>{{ __('messages.home.cta_guest_privacy_title', [], app()->getLocale()) }}</strong> {!! __('messages.home.cta_guest_privacy_text', [], app()->getLocale()) !!}<br>
+                        <p>{!! __('messages.home.cta_guest_privacy_use_statistics', [], app()->getLocale()) !!}  </p>
+                        <a href="{{ route('register') }}" class="btn btn-outline-primary btn-sm mt-2">{{ __('messages.home.sign_up') }}</a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        @endguest
         <!-- First Row: Leaderboards -->
         <div class="row g-4 mb-4">
             <div class="col-12 col-lg-3">

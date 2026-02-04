@@ -75,6 +75,15 @@
             <div class="text-center">
                 <a href="{{ route('leaderboard') }}" class="btn btn-primary btn-lg me-2">View Leaderboard</a>
                 @guest
+                    <div class="mt-4 mb-2">
+                        <div class="alert alert-info" style="max-width: 500px; margin: 0 auto;">
+                            <strong>Why register?</strong><br>
+                            Register to track your sneezes and join the leaderboard!<br>
+                            <span class="d-block mt-2">
+                                <strong>Your privacy matters:</strong> You <u>never</u> have to share your location. All your data is <u>absolutely private</u> and never shared with anyone.
+                            </span>
+                        </div>
+                    </div>
                     <a href="{{ route('register') }}" class="btn btn-outline-primary btn-lg">Get Started</a>
                 @endguest
             </div>
