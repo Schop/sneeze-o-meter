@@ -33,6 +33,12 @@ return [
         'already_registered' => 'Al geregistreerd?',
         'log_in' => 'Inloggen',
         'register' => 'Registreren',
+        'reset_password' => 'Wachtwoord Resetten',
+        'send_reset_link' => 'Stuur Wachtwoord Reset Link',
+        'reset_password_notification' => 'Wachtwoord Reset Notificatie',
+        'password_reset_request' => 'Je ontvangt deze e-mail omdat we een wachtwoord reset verzoek hebben ontvangen voor je account.',
+        'reset_link_expires' => 'Deze wachtwoord reset link verloopt over :count minuten.',
+        'no_action_required' => 'Als je geen wachtwoord reset hebt aangevraagd, is geen verdere actie vereist.',
     ],
 
     // Home page
