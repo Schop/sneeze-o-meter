@@ -112,7 +112,7 @@
                 </div>
                 
                 <div class="mt-3">
-                    {{ $sneezes->links() }}
+                    {{ $sneezes->links('pagination::bootstrap-5') }}
                 </div>
             </div>
         </div>
