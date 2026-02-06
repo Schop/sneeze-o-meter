@@ -759,8 +759,14 @@
                 });
                 markers = [];
             } else {
-                // Initialize map
-                map = L.map('heatmap').setView([52.0, 5.0], 7); // Default center on Netherlands
+                // Initialize map with zoom disabled
+                map = L.map('heatmap', {
+                    scrollWheelZoom: false,
+                    doubleClickZoom: false,
+                    touchZoom: false,
+                    zoomControl: false,
+                    dragging: true
+                }).setView([52.0, 5.0], 7); // Default center on Netherlands
                 
                 // Add OpenStreetMap tiles
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {

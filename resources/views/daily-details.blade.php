@@ -335,7 +335,7 @@
         console.log('User heatmap data:', userHeatmapData);
         console.log('All heatmap data:', allHeatmapData);
 
-        // Initialize heatmaps
+        // Initialize user's personal heatmap (simpler style)
         function initHeatmap(elementId, data) {
             console.log('Initializing heatmap for', elementId, 'with', data.length, 'points');
             if (data.length === 0) return;
@@ -399,6 +399,57 @@
             }).addTo(map);
         }
 
+        // Initialize all users heatmap (matches home page style)
+        function initAllUsersHeatmap(elementId, data) {
+            console.log('Initializing all users heatmap for', elementId, 'with', data.length, 'points');
+            if (data.length === 0) return;
+
+            // Calculate center based on data points
+            const avgLat = data.reduce((sum, point) => sum + parseFloat(point.lat), 0) / data.length;
+            const avgLng = data.reduce((sum, point) => sum + parseFloat(point.lng), 0) / data.length;
+
+            const map = L.map(elementId, {
+                scrollWheelZoom: false,
+                doubleClickZoom: false,
+                touchZoom: false,
+                zoomControl: false,
+                dragging: true
+            }).setView([avgLat, avgLng], 12);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 18
+            }).addTo(map);
+
+            // Prepare data for heatmap - format: [lat, lng, intensity]
+            const heatPoints = data.map(point => [
+                parseFloat(point.lat),
+                parseFloat(point.lng),
+                parseFloat(point.count)
+            ]);
+            
+            // Calculate bounds to fit all points
+            const bounds = L.latLngBounds(data.map(p => [parseFloat(p.lat), parseFloat(p.lng)]));
+            map.fitBounds(bounds, { padding: [50, 50] });
+            
+            // Add heatmap layer (matching home page style - heatmap only, no markers)
+            L.heatLayer(heatPoints, {
+                radius: 40,
+                blur: 25,
+                maxZoom: 17,
+                max: 10,
+                minOpacity: 0.5,
+                gradient: {
+                    0.0: 'blue',
+                    0.3: 'cyan',
+                    0.5: 'lime',
+                    0.7: 'yellow',
+                    0.9: 'orange',
+                    1.0: 'red'
+                }
+            }).addTo(map);
+        }
+
         // Initialize user heatmap if data exists
         if (userHeatmapData.length > 0) {
             initHeatmap('userHeatmap', userHeatmapData);
@@ -406,7 +457,7 @@
 
         // Initialize all users heatmap if data exists
         if (allHeatmapData.length > 0) {
-            initHeatmap('allHeatmap', allHeatmapData);
+            initAllUsersHeatmap('allHeatmap', allHeatmapData);
         }
         
         // Create hourly chart

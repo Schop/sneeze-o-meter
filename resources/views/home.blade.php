@@ -488,8 +488,14 @@
                 [Math.max(...lats), Math.max(...lngs)]
             ];
             
-            // Initialize map
-            const map = L.map('sneezeMap');
+            // Initialize map with zoom disabled
+            const map = L.map('sneezeMap', {
+                scrollWheelZoom: false,
+                doubleClickZoom: false,
+                touchZoom: false,
+                zoomControl: false,
+                dragging: true
+            });
             
             // Add tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
